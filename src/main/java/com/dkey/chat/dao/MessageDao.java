@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface MessageDao extends CrudRepository<Message, Long> {
     List<Message> findByTag(String tag);
+
 }

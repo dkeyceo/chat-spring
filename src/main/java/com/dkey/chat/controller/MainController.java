@@ -1,8 +1,10 @@
-package com.dkey.chat;
+package com.dkey.chat.controller;
 
 import com.dkey.chat.dao.MessageDao;
 import com.dkey.chat.model.Message;
+import com.dkey.chat.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,23 +14,22 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class GreetingController {
+public class MainController {
     @Autowired
     private MessageDao messageDao;
-    @GetMapping("/greeting")
-    public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Map model) {
-        model.put("name", name);
+    @GetMapping("/")
+    public String greeting(Map model) {
         return "greeting";
     }
-    @GetMapping
+    @GetMapping("/main")
     public String main(Map model) {
         Iterable<Message> messages = messageDao.findAll();
         model.put("messages",messages);
         return "main";
     }
-    @PostMapping
-    public String add(@RequestParam String text, @RequestParam String tag,Map model ){
-        Message message = new Message(text, tag);
+    @PostMapping("/main")
+    public String add(@AuthenticationPrincipal User user, @RequestParam String text, @RequestParam String tag, Map model ){
+        Message message = new Message(text, tag,user);
         messageDao.save(message);
         Iterable<Message> messages = messageDao.findAll();
         model.put("messages",messages);
